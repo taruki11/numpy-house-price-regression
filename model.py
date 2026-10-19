@@ -208,17 +208,49 @@ def assemble_feature_matrix(X_num, ratio_num_idx, ratio_den_idx, cat_labels=None
     return X_ext
 
 # Step 21 - make_train_val_test
-def make_train_val_test(X, y, train_ratio=0.7, val_ratio=0.15, seed=None):
-    """打乱索引并提取 Train / Val / Test 三部分数据"""
-    indices = make_shuffled_indices(len(X), seed=seed)
-    tr_idx, val_idx, te_idx = partition_indices(indices, train_ratio, val_ratio)
-    X_train, y_train = subset_xy(X, y, tr_idx)
+def make_train_val_test(X, y, train_ratio, val_ratio, seed):
+    """
+    打乱并划分 Train、Validation、Test 数据集
+    返回包含 6 个键的字典: 'X_train', 'y_train', 'X_val', 'y_val', 'X_test', 'y_test'
+    """
+    indices = make_shuffled_indices(len(X), seed)
+    train_idx, val_idx, test_idx = partition_indices(indices, train_ratio, val_ratio)
+    
+    X_train, y_train = subset_xy(X, y, train_idx)
     X_val, y_val = subset_xy(X, y, val_idx)
-    X_test, y_test = subset_xy(X, y, te_idx)
-    return X_train, y_train, X_val, y_val, X_test, y_test
+    X_test, y_test = subset_xy(X, y, test_idx)
+    
+    return {
+        'X_train': X_train,
+        'y_train': y_train,
+        'X_val': X_val,
+        'y_val': y_val,
+        'X_test': X_test,
+        'y_test': y_test
+    }
 
-# Step 22 - standardize_and_add_bias (not yet solved)
-# TODO: implement
+# Step 22 - standardize_and_add_bias
+def standardize_and_add_bias(splits):
+    """
+    仅使用 X_train 计算标准化参数，应用到所有分割集并前置拼接偏置列
+    返回: (std_splits, mean, std)
+    """
+    mean, std = fit_standardizer(splits['X_train'])
+    
+    X_train_std = add_bias_column(apply_standardizer(splits['X_train'], mean, std))
+    X_val_std = add_bias_column(apply_standardizer(splits['X_val'], mean, std))
+    X_test_std = add_bias_column(apply_standardizer(splits['X_test'], mean, std))
+    
+    std_splits = {
+        'X_train': X_train_std,
+        'y_train': splits['y_train'],
+        'X_val': X_val_std,
+        'y_val': splits['y_val'],
+        'X_test': X_test_std,
+        'y_test': splits['y_test']
+    }
+    
+    return std_splits, mean, std
 
 # Step 23 - evaluate_predictions (not yet solved)
 # TODO: implement
