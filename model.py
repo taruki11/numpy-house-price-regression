@@ -92,11 +92,15 @@ def subset_xy(X, y, indices):
     """根据索引切片特征矩阵 X 与目标向量 y"""
     return X[indices], y[indices]
 
-# Step 13 - ols_fit (not yet solved)
-# TODO: implement
+# Step 13 - ols_fit
+def ols_fit(X, y):
+    """利用最小二乘法正规方程/伪逆求解模型权重"""
+    return np.linalg.pinv(X) @ y
 
-# Step 14 - ols_predict (not yet solved)
-# TODO: implement
+# Step 14 - ols_predict
+def ols_predict(X, w):
+    """模型预测值计算: y_hat = X @ w"""
+    return X @ w
 
 # Step 15 - mean_absolute_error (not yet solved)
 # TODO: implement
