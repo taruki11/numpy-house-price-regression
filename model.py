@@ -87,8 +87,10 @@ def partition_indices(indices, train_ratio=0.7, val_ratio=0.15):
     test_idx = indices[n_train + n_val:]
     return train_idx, val_idx, test_idx
 
-# Step 12 - subset_xy (not yet solved)
-# TODO: implement
+# Step 12 - subset_xy
+def subset_xy(X, y, indices):
+    """根据索引切片特征矩阵 X 与目标向量 y"""
+    return X[indices], y[indices]
 
 # Step 13 - ols_fit (not yet solved)
 # TODO: implement
