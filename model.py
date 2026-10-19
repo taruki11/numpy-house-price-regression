@@ -69,11 +69,23 @@ def add_bias_column(X):
     """在特征矩阵最前列拼接常数项 1 作为偏置 (截距项)"""
     return np.column_stack([np.ones(X.shape[0]), X])
 
-# Step 10 - make_shuffled_indices (not yet solved)
-# TODO: implement
+# Step 10 - make_shuffled_indices
+def make_shuffled_indices(n, seed=None):
+    """生成可复现的随机重排索引"""
+    if seed is not None:
+        np.random.seed(seed)
+    return np.random.permutation(n)
 
-# Step 11 - partition_indices (not yet solved)
-# TODO: implement
+# Step 11 - partition_indices
+def partition_indices(indices, train_ratio=0.7, val_ratio=0.15):
+    """将索引按比例切分为训练集、验证集和测试集"""
+    n = len(indices)
+    n_train = int(n * train_ratio)
+    n_val = int(n * val_ratio)
+    train_idx = indices[:n_train]
+    val_idx = indices[n_train:n_train + n_val]
+    test_idx = indices[n_train + n_val:]
+    return train_idx, val_idx, test_idx
 
 # Step 12 - subset_xy (not yet solved)
 # TODO: implement
