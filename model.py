@@ -33,9 +33,9 @@ def clip_columns(X, lower, upper):
     return np.clip(X, lower, upper)
 
 # Step 4 - make_ratio_feature
-def make_ratio_feature(X, num_idx, den_idx, eps=1e-8):
-    """构建比例特征 (分子列 / 分母列)"""
-    return X[:, num_idx] / (X[:, den_idx] + eps)
+def make_ratio_feature(numerator, denominator, eps=1e-8):
+    # TODO: Form a derived ratio feature from two 1-D arrays with safe division.
+    return X[:, denominator] / (X[:, denominator] + eps)
 
 # Step 5 - append_column
 def append_column(X, col):
@@ -51,8 +51,13 @@ def one_hot_encode(cat_labels, categories=None):
         categories = np.unique(cat_arr)
     return (cat_arr[:, None] == categories).astype(float)
 
-# Step 7 - fit_standardizer (not yet solved)
-# TODO: implement
+# Step 7 - fit_standardizer
+def fit_standardizer(X):
+    """在训练集上统计各特征列的均值与标准差"""
+    mean = np.mean(X, axis=0)
+    std = np.std(X, axis=0)
+    std = np.where(std == 0.0, 1.0, std)
+    return mean, std
 
 # Step 8 - apply_standardizer (not yet solved)
 # TODO: implement
