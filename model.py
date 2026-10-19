@@ -43,8 +43,13 @@ def append_column(X, col):
     col_arr = np.asarray(col).reshape(-1, 1)
     return np.hstack([X, col_arr])
 
-# Step 6 - one_hot_encode (not yet solved)
-# TODO: implement
+# Step 6 - one_hot_encode
+def one_hot_encode(cat_labels, categories=None):
+    """类别特征的独热编码 (One-Hot Encoding)"""
+    cat_arr = np.asarray(cat_labels)
+    if categories is None:
+        categories = np.unique(cat_arr)
+    return (cat_arr[:, None] == categories).astype(float)
 
 # Step 7 - fit_standardizer (not yet solved)
 # TODO: implement
