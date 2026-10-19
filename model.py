@@ -59,8 +59,10 @@ def fit_standardizer(X):
     std = np.where(std == 0.0, 1.0, std)
     return mean, std
 
-# Step 8 - apply_standardizer (not yet solved)
-# TODO: implement
+# Step 8 - apply_standardizer
+def apply_standardizer(X, mean, std):
+    """应用 Z-score 标准化变换"""
+    return (X - mean) / std
 
 # Step 9 - add_bias_column (not yet solved)
 # TODO: implement
