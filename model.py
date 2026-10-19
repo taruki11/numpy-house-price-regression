@@ -32,11 +32,16 @@ def clip_columns(X, lower, upper):
     """将特征矩阵各列的值限制在 [lower, upper] 范围内"""
     return np.clip(X, lower, upper)
 
-# Step 4 - make_ratio_feature (not yet solved)
-# TODO: implement
+# Step 4 - make_ratio_feature
+def make_ratio_feature(X, num_idx, den_idx, eps=1e-8):
+    """构建比例特征 (分子列 / 分母列)"""
+    return X[:, num_idx] / (X[:, den_idx] + eps)
 
-# Step 5 - append_column (not yet solved)
-# TODO: implement
+# Step 5 - append_column
+def append_column(X, col):
+    """将新特征向量作为最后一列附加到特征矩阵中"""
+    col_arr = np.asarray(col).reshape(-1, 1)
+    return np.hstack([X, col_arr])
 
 # Step 6 - one_hot_encode (not yet solved)
 # TODO: implement
