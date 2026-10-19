@@ -33,9 +33,19 @@ def clip_columns(X, lower, upper):
     return np.clip(X, lower, upper)
 
 # Step 4 - make_ratio_feature
-def make_ratio_feature(numerator, denominator, eps=1e-8):
-    # TODO: Form a derived ratio feature from two 1-D arrays with safe division.
-    return X[:, denominator] / (X[:, denominator] + eps)
+import numpy as np
+
+def make_ratio_feature(numerator, denominator, eps=1e-8) -> np.ndarray:
+    """
+    通过安全除法衍生比例特征
+    :param numerator: 分子一维数组，形状 (N,)
+    :param denominator: 分母一维数组，形状 (N,)
+    :param eps: 防止除以零的微小浮点数偏置 (默认 1e-8)
+    :return: 比例特征一维数组，形状 (N,)
+    """
+    numerator = np.asarray(numerator, dtype=np.float64)
+    denominator = np.asarray(denominator, dtype=np.float64)
+    return numerator / (denominator + eps)
 
 # Step 5 - append_column
 def append_column(X, col):
@@ -121,17 +131,47 @@ def r_squared(y_true, y_pred):
     ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
     return float(1.0 - ss_res / ss_tot)
 
-# Step 18 - residual_summary (not yet solved)
-# TODO: implement
+# Step 18 - residual_summary
+def residual_summary(y_true, y_pred):
+    """残差统计摘要 (均值、标准差、极值分布)"""
+    residuals = y_true - y_pred
+    return {
+        "mean": float(np.mean(residuals)),
+        "std": float(np.std(residuals)),
+        "min": float(np.min(residuals)),
+        "max": float(np.max(residuals)),
+    }
 
-# Step 19 - prepare_cleaned_features (not yet solved)
-# TODO: implement
+# Step 19 - prepare_cleaned_features
+def prepare_cleaned_features(X, k=1.5):
+    """数据清洗流水线：填充缺失值 + IQR 异常截断"""
+    X_imputed = impute_nan_with_mean(X)
+    lower, upper = compute_iqr_bounds(X_imputed, k=k)
+    return clip_columns(X_imputed, lower, upper)
 
-# Step 20 - assemble_feature_matrix (not yet solved)
-# TODO: implement
+# Step 20 - assemble_feature_matrix
+def assemble_feature_matrix(
+    X_num, ratio_num_idx=None, ratio_den_idx=None, cat_labels=None, categories=None
+):
+    """组装特征矩阵：原始数值特征 + 衍生比例特征 + 独热类别特征"""
+    X = np.array(X_num, copy=True)
+    if ratio_num_idx is not None and ratio_den_idx is not None:
+        ratio = make_ratio_feature(X, ratio_num_idx, ratio_den_idx)
+        X = append_column(X, ratio)
+    if cat_labels is not None:
+        cat_encoded = one_hot_encode(cat_labels, categories=categories)
+        X = np.hstack([X, cat_encoded])
+    return X
 
-# Step 21 - make_train_val_test (not yet solved)
-# TODO: implement
+# Step 21 - make_train_val_test
+def make_train_val_test(X, y, train_ratio=0.7, val_ratio=0.15, seed=None):
+    """打乱索引并提取 Train / Val / Test 三部分数据"""
+    indices = make_shuffled_indices(len(X), seed=seed)
+    tr_idx, val_idx, te_idx = partition_indices(indices, train_ratio, val_ratio)
+    X_train, y_train = subset_xy(X, y, tr_idx)
+    X_val, y_val = subset_xy(X, y, val_idx)
+    X_test, y_test = subset_xy(X, y, te_idx)
+    return X_train, y_train, X_val, y_val, X_test, y_test
 
 # Step 22 - standardize_and_add_bias (not yet solved)
 # TODO: implement

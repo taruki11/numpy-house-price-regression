@@ -27,10 +27,10 @@ python scaffold.py
 - [x] **15.** mean_absolute_error
 - [x] **16.** root_mean_squared_error
 - [x] **17.** r_squared
-- [ ] **18.** residual_summary
-- [ ] **19.** prepare_cleaned_features
-- [ ] **20.** assemble_feature_matrix
-- [ ] **21.** make_train_val_test
+- [x] **18.** residual_summary
+- [x] **19.** prepare_cleaned_features
+- [x] **20.** assemble_feature_matrix
+- [x] **21.** make_train_val_test
 - [ ] **22.** standardize_and_add_bias
 - [ ] **23.** evaluate_predictions
 - [ ] **24.** house_price_pipeline
