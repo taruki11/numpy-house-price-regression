@@ -183,18 +183,29 @@ def prepare_cleaned_features(X, iqr_k=1.5):
     return clip_columns(X_imputed, lower, upper)
 
 # Step 20 - assemble_feature_matrix
-def assemble_feature_matrix(
-    X_num, ratio_num_idx=None, ratio_den_idx=None, cat_labels=None, categories=None
-):
-    """组装特征矩阵：原始数值特征 + 衍生比例特征 + 独热类别特征"""
-    X = np.array(X_num, copy=True)
-    if ratio_num_idx is not None and ratio_den_idx is not None:
-        ratio = make_ratio_feature(X, ratio_num_idx, ratio_den_idx)
-        X = append_column(X, ratio)
+import numpy as np
+
+def assemble_feature_matrix(X_num, ratio_num_idx, ratio_den_idx, cat_labels=None):
+    """
+    组装扩展特征矩阵：
+    1. 提取分子列与分母列，通过 make_ratio_feature 构建比例特征
+    2. 使用 append_column 将比例特征拼接到右侧
+    3. 若 cat_labels 不为 None，通过 one_hot_encode 编码并水平拼接到右侧
+    """
+    # 提取对应列并计算比例特征
+    num = X_num[:, ratio_num_idx]
+    den = X_num[:, ratio_den_idx]
+    ratio = make_ratio_feature(num, den)
+    
+    # 拼接入数值矩阵
+    X_ext = append_column(X_num, ratio)
+    
+    # 拼接类别独热特征
     if cat_labels is not None:
-        cat_encoded = one_hot_encode(cat_labels, categories=categories)
-        X = np.hstack([X, cat_encoded])
-    return X
+        cat_one_hot = one_hot_encode(cat_labels)
+        X_ext = np.hstack([X_ext, cat_one_hot])
+        
+    return X_ext
 
 # Step 21 - make_train_val_test
 def make_train_val_test(X, y, train_ratio=0.7, val_ratio=0.15, seed=None):
