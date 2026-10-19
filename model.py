@@ -264,6 +264,52 @@ def evaluate_predictions(y_true, y_pred):
         'residual_summary': residual_summary(y_true, y_pred)
     }
 
-# Step 24 - house_price_pipeline (not yet solved)
-# TODO: implement
+# Step 24 - house_price_pipeline
+def house_price_pipeline(
+    X,
+    y,
+    ratio_num_idx,
+    ratio_den_idx,
+    cat_labels=None,
+    train_ratio=0.7,
+    val_ratio=0.15,
+    seed=42,
+    iqr_k=1.5
+):
+    """
+    端到端房价回归全流程
+    返回字典严格包含键: 'theta', 'y_test', 'y_test_pred', 'val_metrics', 'test_metrics'
+    """
+    # 1. 缺失值填充与异常截断
+    X_cleaned = prepare_cleaned_features(X, iqr_k=iqr_k)
+    
+    # 2. 构造扩展特征矩阵
+    X_assembled = assemble_feature_matrix(
+        X_cleaned, ratio_num_idx, ratio_den_idx, cat_labels=cat_labels
+    )
+    
+    # 3. 数据集划分
+    splits = make_train_val_test(X_assembled, y, train_ratio, val_ratio, seed)
+    
+    # 4. 训练集标准化与偏置列拼接
+    std_splits, mean, std = standardize_and_add_bias(splits)
+    
+    # 5. OLS 拟合求得权重 theta
+    theta = ols_fit(std_splits['X_train'], std_splits['y_train'])
+    
+    # 6. 在验证集和测试集上进行预测
+    y_val_pred = ols_predict(std_splits['X_val'], theta)
+    y_test_pred = ols_predict(std_splits['X_test'], theta)
+    
+    # 7. 计算各项评估指标
+    val_metrics = evaluate_predictions(std_splits['y_val'], y_val_pred)
+    test_metrics = evaluate_predictions(std_splits['y_test'], y_test_pred)
+    
+    return {
+        'theta': theta,
+        'y_test': std_splits['y_test'],
+        'y_test_pred': y_test_pred,
+        'val_metrics': val_metrics,
+        'test_metrics': test_metrics
+    }
 
