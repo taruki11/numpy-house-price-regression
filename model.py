@@ -64,8 +64,10 @@ def apply_standardizer(X, mean, std):
     """应用 Z-score 标准化变换"""
     return (X - mean) / std
 
-# Step 9 - add_bias_column (not yet solved)
-# TODO: implement
+# Step 9 - add_bias_column
+def add_bias_column(X):
+    """在特征矩阵最前列拼接常数项 1 作为偏置 (截距项)"""
+    return np.column_stack([np.ones(X.shape[0]), X])
 
 # Step 10 - make_shuffled_indices (not yet solved)
 # TODO: implement
