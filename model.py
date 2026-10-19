@@ -108,11 +108,18 @@ def mean_absolute_error(y_true, y_pred):
     """平均绝对误差 MAE"""
     return float(np.mean(np.abs(y_true - y_pred)))
 
-# Step 16 - root_mean_squared_error (not yet solved)
-# TODO: implement
+# Step 16 - root_mean_squared_error
+# ── Step 016  root_mean_squared_error ──
+def root_mean_squared_error(y_true, y_pred):
+    """均方根误差 RMSE"""
+    return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
-# Step 17 - r_squared (not yet solved)
-# TODO: implement
+# Step 17 - r_squared
+def r_squared(y_true, y_pred):
+    """决定系数 R^2"""
+    ss_res = np.sum((y_true - y_pred) ** 2)
+    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+    return float(1.0 - ss_res / ss_tot)
 
 # Step 18 - residual_summary (not yet solved)
 # TODO: implement
