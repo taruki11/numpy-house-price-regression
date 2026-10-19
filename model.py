@@ -149,21 +149,37 @@ def r_squared(y_true, y_pred) -> float:
     return float(1.0 - (ss_res / ss_tot))
 
 # Step 18 - residual_summary
-def residual_summary(y_true, y_pred):
-    """残差统计摘要 (均值、标准差、极值分布)"""
-    residuals = y_true - y_pred
+import numpy as np
+
+def residual_summary(y_true, y_pred) -> dict:
+    """
+    计算残差指标摘要字典
+    严格包含键: 'mean', 'std', 'median_abs'
+    """
+    y_true = np.asarray(y_true, dtype=float)
+    y_pred = np.asarray(y_pred, dtype=float)
+    
+    # 残差 r = y_true - y_pred
+    r = y_true - y_pred
+    
     return {
-        "mean": float(np.mean(residuals)),
-        "std": float(np.std(residuals)),
-        "min": float(np.min(residuals)),
-        "max": float(np.max(residuals)),
+        'mean': float(np.mean(r)),
+        'std': float(np.std(r)),                   # 总体标准差 (ddof=0)
+        'median_abs': float(np.median(np.abs(r)))  # 绝对残差中位数
     }
 
 # Step 19 - prepare_cleaned_features
-def prepare_cleaned_features(X, k=1.5):
-    """数据清洗流水线：填充缺失值 + IQR 异常截断"""
+import numpy as np
+
+def prepare_cleaned_features(X, iqr_k=1.5):
+    """
+    依次调用已有的三项辅助函数完成缺失值填充与异常值截断
+    """
+    # 1. 均值插补
     X_imputed = impute_nan_with_mean(X)
-    lower, upper = compute_iqr_bounds(X_imputed, k=k)
+    # 2. 计算 IQR 边界
+    lower, upper = compute_iqr_bounds(X_imputed, iqr_k)
+    # 3. 截断异常值
     return clip_columns(X_imputed, lower, upper)
 
 # Step 20 - assemble_feature_matrix
