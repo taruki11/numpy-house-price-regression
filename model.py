@@ -125,11 +125,28 @@ def root_mean_squared_error(y_true, y_pred):
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
 # Step 17 - r_squared
-def r_squared(y_true, y_pred):
-    """决定系数 R^2"""
+import numpy as np
+
+def r_squared(y_true, y_pred) -> float:
+    """
+    计算决定系数 R^2
+    :param y_true: 真实目标值一维数组
+    :param y_pred: 模型预测值一维数组
+    :return: R^2 分数 (若 SS_tot 为 0 则返回 0.0)
+    """
+    y_true = np.asarray(y_true, dtype=np.float64)
+    y_pred = np.asarray(y_pred, dtype=np.float64)
+    
+    # 残差平方和
     ss_res = np.sum((y_true - y_pred) ** 2)
+    # 总平方和
     ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
-    return float(1.0 - ss_res / ss_tot)
+    
+    # 边界情况处理：真实值全相等导致方差为 0
+    if ss_tot == 0.0:
+        return 0.0
+        
+    return float(1.0 - (ss_res / ss_tot))
 
 # Step 18 - residual_summary
 def residual_summary(y_true, y_pred):
