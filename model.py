@@ -102,8 +102,11 @@ def ols_predict(X, w):
     """模型预测值计算: y_hat = X @ w"""
     return X @ w
 
-# Step 15 - mean_absolute_error (not yet solved)
-# TODO: implement
+# Step 15 - mean_absolute_error
+# ── Step 015  mean_absolute_error ──
+def mean_absolute_error(y_true, y_pred):
+    """平均绝对误差 MAE"""
+    return float(np.mean(np.abs(y_true - y_pred)))
 
 # Step 16 - root_mean_squared_error (not yet solved)
 # TODO: implement
